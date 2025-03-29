@@ -84,171 +84,6 @@ always @(*) begin
     endcase
 end
 
-// Bộ giải mã output
-//always @(*) begin
-//    // Mặc định tất cả tín hiệu là 0
-//    sel = 0; rd = 0; ld_ir = 0; halt = 0;
-//    inc_pc = 0; ld_ac = 0; ld_pc = 0; wr = 0; data_e = 0;
-//    current_state = state;
-//    case (state)
-//        INST_ADDR: begin
-//         sel = 1; 
-//         rd = 0; 
-//         ld_ir = 0;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         end
-//        INST_FETCH: begin
-//         sel = 1; 
-//         rd = 1; 
-//         ld_ir = 0;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         end 
-//        INST_LOAD: begin
-//         sel = 1; 
-//         rd = 1; 
-//         ld_ir = 1;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//        end
-//        IDLE: begin
-//         sel = 1; 
-//         rd = 1; 
-//         ld_ir = 1;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         end
-//        OP_ADDR: begin
-//         if(opcode == HLT) begin
-//         halt = 1;
-//         end else begin
-//         halt = 0;
-//         end
-//         sel = 0;  
-//         rd = 0; 
-//         ld_ir = 0;
-//         inc_pc = 1;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0;  
-//        end
-//        OP_FETCH: begin
-//         sel = 0; 
-//         ld_ir = 0;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         case(opcode)
-//         ADD_: rd = 1;
-//         AND_: rd = 1;
-//         XOR_: rd = 1;
-//         LDA:  rd = 1;
-//         default: rd = 0;
-//         endcase
-//         end
-//        ALU_OP: begin
-//         sel = 0; 
-//         rd = 0;
-//         ld_ir = 0;
-//         halt = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         inc_pc = 0;
-//         case(opcode)
-//         ADD_: rd = 1;
-//         AND_: rd = 1;
-//         XOR_: rd = 1;
-//         LDA:  rd = 1;
-//         JMP: ld_pc = 1;
-//         STO: data_e = 1;
-//         SKZ: begin
-//              if(zero_flag) begin
-//              inc_pc = 1;
-//              end
-//              else begin
-//              inc_pc = 0;
-//              end
-//         end
-//         default: begin
-//         rd = 0;
-//         ld_pc = 0;
-//         data_e = 0;
-//         inc_pc = 0;
-//         end
-//         endcase
-//         end   
-//         STORE: begin
-//         sel = 0; 
-//         rd = 0;
-//         ld_ir = 0;
-//         halt = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         inc_pc = 0;
-//         wr = 0;
-//         data_e = 0; 
-//         case(opcode)
-//         ADD_: begin rd = 1; ld_ac = 1;end
-//         AND_: begin rd = 1; ld_ac = 1;end
-//         XOR_: begin rd = 1; ld_ac = 1;end
-//         LDA:  begin rd = 1; ld_ac = 1;end
-//         JMP: ld_pc = 1;
-//         STO: begin wr = 1; data_e = 1; end
-//         default: begin
-//         rd = 0;
-//         ld_ac = 0;
-//         wr = 0;
-//         data_e = 0;
-//         end
-//         endcase
-//         end
-//         STOP: begin
-//         sel = 0; 
-//         rd = 0; 
-//         ld_ir = 0;
-//         halt = 1;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0;      
-//         end
-//         default: begin
-//         sel = 0; 
-//         rd = 0; 
-//         ld_ir = 0;
-//         halt = 0;
-//         inc_pc = 0;
-//         ld_ac = 0;
-//         ld_pc = 0;
-//         wr = 0;
-//         data_e = 0;    
-//         end
-//    endcase
-//end
 always @(*) begin
     // Giá trị mặc định
     sel = 0; rd = 0; ld_ir = 0; halt = 0;
@@ -280,6 +115,9 @@ always @(*) begin
         OP_FETCH: begin
             case (opcode)
                 ADD_, AND_, XOR_, LDA: rd = 1;
+                default: begin
+                   rd = 0;
+                end
             endcase
         end
         ALU_OP: begin
@@ -288,19 +126,30 @@ always @(*) begin
                 JMP: ld_pc = 1;
                 STO: data_e = 1;
                 SKZ: inc_pc = zero_flag;
+                default: begin
+                     sel = 0; rd = 0; ld_ir = 0; halt = 0;
+                     inc_pc = 0; ld_ac = 0; ld_pc = 0; wr = 0; data_e = 0;
+                end
             endcase
         end
         STORE: begin
             case (opcode)
                 ADD_, AND_, XOR_, LDA: begin rd = 1; ld_ac = 1; end
                 STO: begin wr = 1; data_e = 1; end
+                default: begin
+                    sel = 0; rd = 0; ld_ir = 0; halt = 0;
+                 inc_pc = 0; ld_ac = 0; ld_pc = 0; wr = 0; data_e = 0;
+                end
             endcase
         end
         STOP: begin
             halt = 1;
         end
+        default: begin
+           sel = 0; rd = 0; ld_ir = 0; halt = 0;
+     inc_pc = 0; ld_ac = 0; ld_pc = 0; wr = 0; data_e = 0;
+        end
     endcase
 end
-
 endmodule
           
