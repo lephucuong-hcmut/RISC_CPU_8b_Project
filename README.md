@@ -6,6 +6,7 @@ RISC (Reduced Instruction Set Computer) is a modern processor design methodology
 
 The processor operates based on clock and reset signals. The program execution stops when the HALT signal is encountered.
 
+![Image](https://github.com/user-attachments/assets/481f8734-959d-4b0c-b40c-a0fd48b33567)
 #System Components
 
 Program Counter: Stores the program address register.
